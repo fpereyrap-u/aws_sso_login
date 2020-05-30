@@ -80,4 +80,4 @@ accounts_list = get_list_accounts(token)
 for account in accounts_list:
     account_id = account['accountId']
     account_name = account['accountName']
-    print (get_roles_account(token, account_id))
+    print (account_name, get_roles_account(token, account_id))
