@@ -1,5 +1,5 @@
 import boto3
-import json, webbrowser
+import json, webbrowser, socket
 
 client = boto3.client('sso-oidc')
 sso_client = boto3.client('sso')
@@ -63,7 +63,7 @@ def get_roles_account(token, accountid):
         return e
 
 
-clientId, clientSecrets = device_registration('fplaptop', 'public')
+clientId, clientSecrets = device_registration(socket.gethostname(), 'public')
 url, deviceCode, userCode = get_auth_device(clientId, clientSecrets)
 
 try:
