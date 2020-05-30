@@ -1,10 +1,8 @@
 import boto3
 import json, webbrowser
 
-
-
-
 client = boto3.client('sso-oidc')
+sso_client = boto3.client('sso')
 
 def device_registration(client_name, client_type):
     try:
@@ -27,6 +25,7 @@ def get_auth_device(id, secret, start_url='https://cloud-uala.awsapps.com/start#
     except Exception as e:
         return e
 
+
 def get_token(id, secret, device_code, user_code):
     try:
         response_token_creation = client.create_token(
@@ -36,12 +35,32 @@ def get_token(id, secret, device_code, user_code):
             deviceCode= device_code,
             code= user_code
         )
-        return response_token_creation
+        return response_token_creation['accessToken']
     except Exception as e:
         return e
 
+def get_list_accounts(token):
+    try:
+        response_list_accounts = sso_client.list_accounts(
+            # nextToken='string',
+            maxResults=123,
+            accessToken=token
+        )
+        return response_list_accounts['accountList']
+    except Exception as e:
+        return e
 
-
+def get_roles_account(token, accountid):
+    try:
+        response_account_roles = sso_client.list_account_roles(
+            # nextToken='string',
+            maxResults=123,
+            accessToken=token,
+            accountId=accountid
+        )
+        return response_account_roles['roleList']
+    except Exception as e:
+        return e
 
 
 clientId, clientSecrets = device_registration('fplaptop', 'public')
@@ -54,10 +73,11 @@ except:
 
 input("After login, press Enter to continue...")
 
-response = get_token(clientId, clientSecrets, deviceCode, userCode)
+token = get_token(clientId, clientSecrets, deviceCode, userCode)
 
-print (response)
+accounts_list = get_list_accounts(token)
 
-
-
-
+for account in accounts_list:
+    account_id = account['accountId']
+    account_name = account['accountName']
+    print (get_roles_account(token, account_id))
