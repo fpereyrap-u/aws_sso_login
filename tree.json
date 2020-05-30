@@ -1,0 +1,51 @@
+response_list_accounts = sso_client.list_accounts(
+    # nextToken='string',
+    maxResults=123,
+    accessToken= response_token_creation['accessToken']
+)
+
+{
+    'nextToken': 'string',
+    'accountList': [
+        {
+            'accountId': 'string',
+            'accountName': 'string',
+            'emailAddress': 'string'
+        },
+    ]
+}
+
+
+
+
+response = client.list_account_roles(
+    nextToken='string',
+    maxResults=123,
+    accessToken='string',
+    accountId='string'
+)
+
+{
+    'nextToken': 'string',
+    'roleList': [
+        {
+            'roleName': 'string',
+            'accountId': 'string'
+        },
+    ]
+}
+
+response = client.get_role_credentials(
+    roleName='string',
+    accountId='string',
+    accessToken='string'
+)
+
+{
+    'roleCredentials': {
+        'accessKeyId': 'string',
+        'secretAccessKey': 'string',
+        'sessionToken': 'string',
+        'expiration': 123
+    }
+}
