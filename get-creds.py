@@ -1,5 +1,5 @@
 import boto3
-import json
+import json, webbrowser
 
 client_name= 'fplaptop'
 client_type= 'public'
@@ -27,15 +27,23 @@ response_device_authorization = client.start_device_authorization(
     startUrl= start_url
 )
 
-# print (response_device_authorization)
+url = response_device_authorization['verificationUriComplete']
 
-response_token_creation = client.create_token(
-    clientId= response_client_registration['clientId'],
-    clientSecret= response_client_registration['clientSecret'],
-    grantType='urn:ietf:params:oauth:grant-type:device_code', #review
-    deviceCode= response_device_authorization['deviceCode'],
-    # code='string',
-    # refreshToken='string',
-)
+webbrowser.open_new(url)
+print ("Please manual login: %s \n" % (url))
 
-print (response_token_creation)
+input("After login, press Enter to continue...")
+
+
+try:
+    response_token_creation = client.create_token(
+        clientId= response_client_registration['clientId'],
+        clientSecret= response_client_registration['clientSecret'],
+        grantType='urn:ietf:params:oauth:grant-type:device_code', #review
+        deviceCode= response_device_authorization['deviceCode'],
+        code=response_device_authorization['userCode'],
+        #refreshToken='string',
+    )
+    print (response_token_creation)
+except Exception as e:
+    print (e)
