@@ -57,13 +57,6 @@ response_list_accounts = sso_client.list_accounts(
 
 print (response_list_accounts)
 
-response_acount_roles = sso_client.list_account_roles(
-    # nextToken='string',
-    maxResults=123,
-    accessToken= response_token_creation['accessToken'],
-    accountId= response_list_accounts['accountId']
-)
-
 for accountId in response_list_accounts['accountId']:
     print (accountId)
     response_acount_roles = sso_client.list_account_roles(
