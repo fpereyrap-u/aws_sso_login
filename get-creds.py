@@ -1,8 +1,22 @@
 import boto3
 import json, webbrowser, socket
+from pathlib import Path
+from configparser import SafeConfigParser
+
+AWS_DEFAULT_REGION = 'us-east-1'
+AWS_CREDENTIAL_PATH = f'{Path.home()}/.aws/credentials'
 
 client = boto3.client('sso-oidc')
 sso_client = boto3.client('sso')
+
+def read_config(path):
+    config = SafeConfigParser()
+    config.read(path)
+    return config
+
+def write_config(path, config):
+    with open(path, "w") as destination:
+        config.write(destination)
 
 def device_registration(client_name, client_type):
     try:
@@ -73,6 +87,18 @@ def get_roles_credentials(rolename, accountid, token):
     except Exception as e:
         return e
 
+def update_aws_credentials(profile_name, profile, credentials):
+    region = AWS_DEFAULT_REGION
+    config = read_config(AWS_CREDENTIAL_PATH)
+    if config.has_section(profile_name):
+        config.remove_section(profile_name)
+    config.add_section(profile_name)
+    config.set(profile_name, "region", region)
+    config.set(profile_name, "aws_access_key_id", credentials["accessKeyId"])
+    config.set(profile_name, "aws_secret_access_key ", credentials["secretAccessKey"])
+    config.set(profile_name, "aws_session_token", credentials["sessionToken"])
+    write_config(AWS_CREDENTIAL_PATH, config)
+
 clientId, clientSecrets = device_registration(socket.gethostname(), 'public')
 url, deviceCode, userCode = get_auth_device(clientId, clientSecrets)
 
@@ -94,4 +120,6 @@ for account in accounts_list:
     for roleName in role_name_data:
         role_name = roleName ['roleName']
         account = roleName['accountId']
-        print (account_name, get_roles_credentials(role_name, account, token))
+        temp_credentials = get_roles_credentials(role_name, account, token)
+        print (account_name, 'created')
+        update_aws_credentials(account_name, role_name, temp_credentials)
