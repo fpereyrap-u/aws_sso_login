@@ -62,6 +62,16 @@ def get_roles_account(token, accountid):
     except Exception as e:
         return e
 
+def get_roles_credentials(rolename, accountid, token):
+    try:
+        response_role_credentials = sso_client.get_role_credentials(
+            roleName=rolename,
+            accountId=accountid,
+            accessToken=token
+        )
+        return response_role_credentials['roleCredentials']
+    except Exception as e:
+        return e
 
 clientId, clientSecrets = device_registration(socket.gethostname(), 'public')
 url, deviceCode, userCode = get_auth_device(clientId, clientSecrets)
@@ -80,4 +90,8 @@ accounts_list = get_list_accounts(token)
 for account in accounts_list:
     account_id = account['accountId']
     account_name = account['accountName']
-    print (account_name, get_roles_account(token, account_id))
+    role_name_data = get_roles_account(token, account_id)
+    for roleName in role_name_data:
+        role_name = roleName ['roleName']
+        account = roleName['accountId']
+        print (account_name, get_roles_credentials(role_name, account, token))
