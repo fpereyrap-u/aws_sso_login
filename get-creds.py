@@ -7,6 +7,7 @@ from configparser import SafeConfigParser
 
 AWS_DEFAULT_REGION = 'us-east-1'
 AWS_CREDENTIAL_PATH = f'{Path.home()}/.aws/credentials'
+sso_start_url = ''
 
 client = boto3.client('sso-oidc')
 sso_client = boto3.client('sso')
@@ -30,7 +31,7 @@ def device_registration(client_name, client_type):
     except Exception as e:
         return e
 
-def get_auth_device(id, secret, start_url='https://cloud-uala.awsapps.com/start#/'):
+def get_auth_device(id, secret, start_url):
     try:
         response_device_authorization = client.start_device_authorization(
             clientId=id,
@@ -102,7 +103,7 @@ def update_aws_credentials(profile_name, profile, credentials):
     write_config(AWS_CREDENTIAL_PATH, config)
 
 clientId, clientSecrets = device_registration(socket.gethostname(), 'public')
-url, deviceCode, userCode = get_auth_device(clientId, clientSecrets)
+url, deviceCode, userCode = get_auth_device(clientId, clientSecrets, sso_start_url)
 
 try:
     webbrowser.open(url)
