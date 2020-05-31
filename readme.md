@@ -39,3 +39,8 @@ AWS
     https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_CreateToken.html
     https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_RegisterClient.html
     https://docs.aws.amazon.com/singlesignon/latest/PortalAPIReference/API_GetRoleCredentials.html
+
+## Credits
+
+    Facundo Pereyra / f.pereyrap@gmail.com
+    Matias Carosso / carossomatias@gmail.com
